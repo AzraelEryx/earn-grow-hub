@@ -110,20 +110,19 @@ function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
-          {[
+          {([
             { to: "/referrals", t: "Refer & Earn", icon: IconUsers, tint: "from-teal-500/30 to-teal-500/5" },
             { to: "/tasks", t: "Daily Tasks", icon: IconBell, tint: "from-blue-500/30 to-blue-500/5" },
             { to: "/history", t: "History", icon: IconHistory, tint: "from-purple-500/30 to-purple-500/5" },
-            { to: "/dashboard", t: "Spin & Win", icon: IconSpin, tint: "from-amber-500/30 to-amber-500/5", action: "spin" as const },
-          ].map((q, i) => {
+            { to: "/profile", t: "Spin & Win", icon: IconSpin, tint: "from-amber-500/30 to-amber-500/5" },
+          ] as const).map((q, i) => {
             const Icon = q.icon;
-            const Wrap: any = q.action ? "button" : Link;
             return (
-              <Wrap key={i} to={q.action ? undefined : q.to}
+              <Link key={i} to={q.to}
                 className={`p-4 rounded-2xl border border-border bg-gradient-to-br ${q.tint} card-glow text-left`}>
                 <Icon />
                 <div className="mt-3 font-semibold text-sm">{q.t}</div>
-              </Wrap>
+              </Link>
             );
           })}
         </div>

@@ -90,7 +90,7 @@ function GateModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             </div>
             <h3 className="mt-4 text-xl font-semibold">All Set</h3>
             <p className="mt-1 text-sm text-muted-foreground">You're ready to claim your welcome bonus.</p>
-            <Link to="/signup" disabled={!allDone}
+            <Link to="/signup"
               className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full gradient-accent text-[#08110F] px-5 py-3 text-sm font-semibold ${!allDone && "opacity-40 pointer-events-none"}`}>
               Create Your Account
             </Link>

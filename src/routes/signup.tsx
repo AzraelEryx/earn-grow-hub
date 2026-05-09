@@ -8,7 +8,7 @@ import { PLATFORM_NAME } from "@/lib/mock";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Create Account — ChinexEarn" },
+      { title: "Create Account — Chixx9ja" },
       { name: "description", content: "Sign up and instantly receive a N30,000 welcome bonus." },
     ],
   }),

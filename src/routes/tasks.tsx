@@ -6,7 +6,7 @@ import { fmtNGN } from "@/lib/format";
 import { IconArrowLeft, IconCheck } from "@/components/icons";
 
 export const Route = createFileRoute("/tasks")({
-  head: () => ({ meta: [{ title: "Daily Tasks — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Daily Tasks — Chixx9ja" }] }),
   component: TasksPage,
 });
 

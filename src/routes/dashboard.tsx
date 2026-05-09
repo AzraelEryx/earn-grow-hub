@@ -13,7 +13,7 @@ import {
 } from "@/components/icons";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Dashboard — Chixx9ja" }] }),
   component: DashboardPage,
 });
 
@@ -305,7 +305,7 @@ function ReferralSection({ user }: { user: { referralCode: string; name: string 
   const link = `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${user.referralCode}`;
   const copy = () => { navigator.clipboard.writeText(link); };
   const copyAll = () => {
-    const msg = `Hey, join ${"ChinexEarn"} and get ${fmtNGN(PLACEHOLDERS.welcomeBonus)} welcome bonus. Use my code ${user.referralCode} or sign up here: ${link}`;
+    const msg = `Hey, join ${"Chixx9ja"} and get ${fmtNGN(PLACEHOLDERS.welcomeBonus)} welcome bonus. Use my code ${user.referralCode} or sign up here: ${link}`;
     navigator.clipboard.writeText(msg);
   };
   const shareOn = (url: string) => window.open(url, "_blank");

@@ -7,7 +7,7 @@ import { randName } from "@/lib/mock";
 import { IconArrowLeft, IconGift, IconUsers, IconBolt, IconChart, IconCopy, IconShare } from "@/components/icons";
 
 export const Route = createFileRoute("/referrals")({
-  head: () => ({ meta: [{ title: "Refer & Earn — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Refer & Earn — Chixx9ja" }] }),
   component: ReferralsPage,
 });
 

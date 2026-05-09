@@ -9,7 +9,7 @@ import { NIGERIAN_BANKS } from "@/lib/mock";
 import { IconArrowLeft, IconDollar, IconClose, IconCopy, IconCheck } from "@/components/icons";
 
 export const Route = createFileRoute("/withdraw")({
-  head: () => ({ meta: [{ title: "Withdraw — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Withdraw — Chixx9ja" }] }),
   component: WithdrawPage,
 });
 

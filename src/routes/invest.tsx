@@ -9,7 +9,7 @@ import { PLATFORM_NAME } from "@/lib/mock";
 import { IconShield, IconLock, IconBolt, IconCheck, IconChart } from "@/components/icons";
 
 export const Route = createFileRoute("/invest")({
-  head: () => ({ meta: [{ title: "Invest — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Invest — Chixx9ja" }] }),
   component: InvestPage,
 });
 

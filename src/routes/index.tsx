@@ -11,9 +11,9 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ChinexEarn — Refer, Earn & Invest in Nigeria" },
+      { title: "Chixx9ja — Refer, Earn & Invest in Nigeria" },
       { name: "description", content: "Join thousands earning daily through referrals, tasks and verified investment plans. N30,000 welcome bonus." },
-      { property: "og:title", content: "ChinexEarn — Refer, Earn & Invest" },
+      { property: "og:title", content: "Chixx9ja — Refer, Earn & Invest" },
       { property: "og:description", content: "Earn N15,000 per referral. Verified, regulated, instant payouts." },
     ],
   }),
@@ -42,27 +42,27 @@ function Ticker() {
 
 function GateModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [step, setStep] = useState(0);
-  const [done, setDone] = useState([false, false, false]);
+  const [done, setDone] = useState([false, false]);
   const steps = [
     { title: "Join Telegram Channel", desc: "Get instant withdrawal proofs", url: PLACEHOLDERS.telegram1, action: "Open Telegram" },
-    { title: "Follow on X (Twitter)", desc: "Stay up to date with announcements", url: PLACEHOLDERS.twitter, action: "Open X" },
-    { title: "Like Facebook Page", desc: "Connect with our community", url: PLACEHOLDERS.facebook, action: "Open Facebook" },
+    { title: "Join WhatsApp Channel", desc: "Daily tips & community updates", url: PLACEHOLDERS.whatsapp, action: "Open WhatsApp" },
   ];
   if (!open) return null;
   const allDone = done.every(Boolean);
-  const progress = ((step + (done[step] ? 1 : 0)) / 4) * 100;
+  const totalSteps = steps.length + 1;
+  const progress = ((step + (done[step] ? 1 : 0)) / totalSteps) * 100;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-3">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
       <div className="relative w-full max-w-md bg-surface rounded-3xl border border-border p-6 animate-slide-up">
         <button onClick={onClose} className="absolute top-4 right-4 w-9 h-9 rounded-full border border-border flex items-center justify-center"><IconClose /></button>
-        <div className="text-xs uppercase tracking-widest text-muted-foreground">Step {Math.min(step + 1, 4)} of 4</div>
+        <div className="text-xs uppercase tracking-widest text-muted-foreground">Step {Math.min(step + 1, totalSteps)} of {totalSteps}</div>
         <div className="mt-2 h-1.5 bg-secondary rounded-full overflow-hidden">
           <div className="h-full gradient-accent transition-all" style={{ width: `${Math.max(8, progress)}%` }} />
         </div>
 
-        {step < 3 ? (
+        {step < steps.length ? (
           <div className="mt-6">
             <h3 className="text-xl font-semibold">{steps[step].title}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{steps[step].desc}</p>

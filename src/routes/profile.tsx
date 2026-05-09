@@ -6,7 +6,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { IconCamera, IconUser, IconBell, IconUsers, IconCalendar, IconLogout, IconSun, IconMoon } from "@/components/icons";
 
 export const Route = createFileRoute("/profile")({
-  head: () => ({ meta: [{ title: "Profile — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Profile — Chixx9ja" }] }),
   component: ProfilePage,
 });
 

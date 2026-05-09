@@ -5,7 +5,7 @@ import { IconArrowLeft, IconShield, IconUser, IconDoc, IconLock, IconChevronDown
 import { PLATFORM_NAME } from "@/lib/mock";
 
 export const Route = createFileRoute("/trust")({
-  head: () => ({ meta: [{ title: "Trust & Verified — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Trust & Verified — Chixx9ja" }] }),
   component: TrustPage,
 });
 

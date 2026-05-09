@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
 import { fmtNGN } from "@/lib/format";
-import { randName } from "@/lib/mock";
+import { randName, PLACEHOLDERS } from "@/lib/mock";
+import { getInviteCount } from "@/lib/plan";
 import { IconArrowLeft, IconGift, IconUsers, IconBolt, IconChart, IconCopy, IconShare } from "@/components/icons";
 
 export const Route = createFileRoute("/referrals")({
@@ -15,6 +16,9 @@ function ReferralsPage() {
   const { user, loading } = useAuth();
   const nav = useNavigate();
   const [tab, setTab] = useState<"invite" | "leaders">("invite");
+  const invites = useMemo(() => getInviteCount(), []);
+  const perInvite = PLACEHOLDERS.perReferral;
+  const totalEarned = invites * perInvite;
   useEffect(() => { if (!loading && !user) nav({ to: "/login" }); }, [user, loading, nav]);
   if (!user) return null;
   const link = `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${user.referralCode}`;
@@ -32,9 +36,9 @@ function ReferralsPage() {
 
         <div className="mt-5 grid grid-cols-3 gap-3">
           {[
-            { Icon: IconUsers, l: "Total Referrals", v: "0" },
-            { Icon: IconBolt, l: "Per Invite", v: fmtNGN(15000) },
-            { Icon: IconChart, l: "Total Earned", v: fmtNGN(0) },
+            { Icon: IconUsers, l: "Total Referrals", v: String(invites) },
+            { Icon: IconBolt, l: "Per Invite", v: fmtNGN(perInvite) },
+            { Icon: IconChart, l: "Total Earned", v: fmtNGN(totalEarned) },
           ].map((s, i) => (
             <div key={i} className="p-4 rounded-2xl bg-card border border-border">
               <s.Icon /><div className="mt-2 text-[11px] text-muted-foreground">{s.l}</div>

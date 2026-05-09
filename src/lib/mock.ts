@@ -29,5 +29,5 @@ export const PLACEHOLDERS = {
   supportHandle: "@OfficialChinex",
   adminPassword: "admin2026",
   welcomeBonus: 30000,
-  perReferral: 15000,
+  perReferral: 3500,
 };

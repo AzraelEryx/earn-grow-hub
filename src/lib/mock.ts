@@ -23,6 +23,7 @@ export const PLATFORM_NAME = "Chixx9ja";
 export const PLACEHOLDERS = {
   telegram1: "https://t.me/chinex0i",
   telegram2: "https://t.me/chinex0i",
+  whatsapp: "[PLACEHOLDER_WHATSAPP_URL]",
   twitter: "https://x.com/",
   facebook: "https://facebook.com/",
   supportHandle: "@OfficialChinex",

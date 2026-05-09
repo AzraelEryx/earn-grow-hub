@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +7,7 @@ import { RateBadge } from "@/components/RateBadge";
 import { fmtNGN, fmtUSD, ngnToUsd } from "@/lib/format";
 import { PLATFORM_NAME } from "@/lib/mock";
 import { IconShield, IconLock, IconBolt, IconCheck, IconChart } from "@/components/icons";
+import { setCurrentPlan } from "@/lib/plan";
 
 export const Route = createFileRoute("/invest")({
   head: () => ({ meta: [{ title: "Invest — Chixx9ja" }] }),
@@ -14,18 +15,25 @@ export const Route = createFileRoute("/invest")({
 });
 
 const PLANS = [
-  { t: "Starter", s: "Basic", d: 40000, m: 4, badge: "" },
-  { t: "Growth", s: "Standard", d: 60000, m: 4, badge: "" },
-  { t: "Balanced", s: "Premium", d: 80000, m: 4, badge: "Popular" },
-  { t: "Premium", s: "Elite", d: 120000, m: 4, badge: "" },
-  { t: "Elite", s: "VIP", d: 200000, m: 4, badge: "" },
-  { t: "Executive", s: "Royal", d: 300000, m: 4, badge: "Highest ROI" },
+  { t: "Starter",   s: "Basic",    d: 40000,  m: 4, badge: "",            key: "starter" as const },
+  { t: "Growth",    s: "Standard", d: 60000,  m: 4, badge: "",            key: "growth" as const },
+  { t: "Balanced",  s: "Premium",  d: 80000,  m: 4, badge: "Popular",     key: "balanced" as const },
+  { t: "Premium",   s: "Elite",    d: 120000, m: 4, badge: "",            key: "premium" as const },
+  { t: "Elite",     s: "VIP",      d: 200000, m: 4, badge: "",            key: "elite" as const },
+  { t: "Executive", s: "Royal",    d: 300000, m: 4, badge: "Highest ROI", key: "executive" as const },
 ];
 
 function InvestPage() {
   const { rate } = useRate();
   const [amount, setAmount] = useState(40000);
+  const nav = useNavigate();
   useAuth(); // ensure context loads
+
+  const activate = (key: typeof PLANS[number]["key"], deposit: number) => {
+    setCurrentPlan(key);
+    setAmount(deposit);
+    nav({ to: "/withdraw" });
+  };
 
   const matchedPlan = [...PLANS].reverse().find((p) => amount >= p.d) ?? PLANS[0];
   const expected = amount * 4;
@@ -63,7 +71,7 @@ function InvestPage() {
                   <div className="text-[11px] text-muted-foreground">≈ {fmtUSD(ngnToUsd(p.d, rate))} → {fmtUSD(ngnToUsd(ret, rate))}</div>
                   <div className="text-[11px] text-cyan-400">400% ROI</div>
                 </div>
-                <button onClick={() => setAmount(p.d)} className="mt-4 w-full rounded-full gradient-accent text-[#08110F] py-2.5 text-sm font-semibold">Continue with {p.s}</button>
+                <button onClick={() => activate(p.key, p.d)} className="mt-4 w-full rounded-full gradient-accent text-[#08110F] py-2.5 text-sm font-semibold">Continue with {p.s}</button>
               </div>
             );
           })}

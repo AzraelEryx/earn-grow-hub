@@ -4,7 +4,7 @@ import { IconArrowLeft, IconChat, IconTelegram } from "@/components/icons";
 import { PLACEHOLDERS } from "@/lib/mock";
 
 export const Route = createFileRoute("/support")({
-  head: () => ({ meta: [{ title: "Support — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Support — Chixx9ja" }] }),
   component: () => (
     <AppShell>
       <div className="max-w-md mx-auto px-4 py-10 text-center">

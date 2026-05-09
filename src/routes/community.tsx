@@ -4,7 +4,7 @@ import { IconArrowLeft, IconUsers, IconTelegram, IconBell, IconLightbulb, IconGi
 import { PLACEHOLDERS } from "@/lib/mock";
 
 export const Route = createFileRoute("/community")({
-  head: () => ({ meta: [{ title: "Community — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Community — Chixx9ja" }] }),
   component: () => (
     <AppShell>
       <div className="max-w-3xl mx-auto px-4 py-5">

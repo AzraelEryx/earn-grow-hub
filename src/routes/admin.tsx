@@ -6,7 +6,7 @@ import { randName, PLACEHOLDERS } from "@/lib/mock";
 import { IconShield } from "@/components/icons";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Admin — Chixx9ja" }] }),
   component: AdminPage,
 });
 

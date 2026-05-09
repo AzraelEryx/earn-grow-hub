@@ -62,10 +62,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ChinexEarn — Refer, Earn & Invest" },
+      { title: "Chixx9ja — Refer, Earn & Invest" },
       { name: "description", content: "Nigeria's trusted refer & earn and investment platform. Earn N15,000 per referral with instant payouts." },
-      { name: "author", content: "ChinexEarn" },
-      { property: "og:title", content: "ChinexEarn — Refer, Earn & Invest" },
+      { name: "author", content: "Chixx9ja" },
+      { property: "og:title", content: "Chixx9ja — Refer, Earn & Invest" },
       { property: "og:description", content: "Earn rewards, complete tasks, refer friends and grow with verified investments." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

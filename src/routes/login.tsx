@@ -6,7 +6,7 @@ import { IconShield, IconArrowRight } from "@/components/icons";
 import { PLATFORM_NAME } from "@/lib/mock";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Login — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "Login — Chixx9ja" }] }),
   component: Login,
 });
 

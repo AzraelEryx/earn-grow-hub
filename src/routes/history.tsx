@@ -7,7 +7,7 @@ import { fmtNGN, fmtUSD, ngnToUsd } from "@/lib/format";
 import { IconArrowLeft, IconArrowUpRight, IconArrowDownLeft, IconHistory } from "@/components/icons";
 
 export const Route = createFileRoute("/history")({
-  head: () => ({ meta: [{ title: "History — ChinexEarn" }] }),
+  head: () => ({ meta: [{ title: "History — Chixx9ja" }] }),
   component: HistoryPage,
 });
 

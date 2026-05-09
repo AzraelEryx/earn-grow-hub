@@ -11,9 +11,9 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ChinexEarn — Refer, Earn & Invest in Nigeria" },
+      { title: "Chixx9ja — Refer, Earn & Invest in Nigeria" },
       { name: "description", content: "Join thousands earning daily through referrals, tasks and verified investment plans. N30,000 welcome bonus." },
-      { property: "og:title", content: "ChinexEarn — Refer, Earn & Invest" },
+      { property: "og:title", content: "Chixx9ja — Refer, Earn & Invest" },
       { property: "og:description", content: "Earn N15,000 per referral. Verified, regulated, instant payouts." },
     ],
   }),

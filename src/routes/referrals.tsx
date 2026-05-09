@@ -76,7 +76,7 @@ function ReferralsPage() {
                 {[
                   "Share your unique referral link",
                   "They sign up and get N30,000 welcome bonus",
-                  "You earn N15,000 instantly",
+                  `You earn ${fmtNGN(perInvite)} instantly`,
                 ].map((s, i) => (
                   <li key={i} className="flex gap-3">
                     <span className="w-7 h-7 rounded-full gradient-accent text-[#08110F] flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
@@ -107,7 +107,7 @@ function ReferralsPage() {
           <div className="mt-5 p-5 rounded-2xl bg-card border border-border">
             <h3 className="font-semibold mb-3">Top Referrers</h3>
             <div className="divide-y divide-border">
-              {Array.from({ length: 10 }, (_, i) => ({ rank: i + 1, name: randName(), refs: 200 - i * 12 - Math.floor(Math.random() * 5), earned: (200 - i * 12) * 15000 })).map((row) => (
+              {Array.from({ length: 10 }, (_, i) => ({ rank: i + 1, name: randName(), refs: 200 - i * 12 - Math.floor(Math.random() * 5), earned: (200 - i * 12) * perInvite })).map((row) => (
                 <div key={row.rank} className="flex items-center gap-3 py-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${row.rank <= 3 ? "gradient-accent text-[#08110F]" : "bg-secondary"}`}>#{row.rank}</div>
                   <div className="flex-1">

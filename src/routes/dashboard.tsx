@@ -37,6 +37,7 @@ function DashboardPage() {
   const { rate } = useRate();
   const nav = useNavigate();
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
+  const [claimPopup, setClaimPopup] = useState<{ amount: number; label: string } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) nav({ to: "/login" });
@@ -98,9 +99,9 @@ function DashboardPage() {
           </div>
         </div>
 
-        <DailyCheckin onClaim={(amount, day) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: `Day ${day} check-in`, amount }); }} />
+        <DailyCheckin onClaim={(amount, day) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: `Day ${day} check-in`, amount }); setClaimPopup({ amount, label: `Day ${day} Check-in` }); }} />
 
-        <ClaimSection onClaim={() => { setBalance((b) => b + 2000); pushTxn({ type: "credit", name: "Daily claim", amount: 2000 }); }} />
+        <ClaimSection onClaim={() => { setBalance((b) => b + 2000); pushTxn({ type: "credit", name: "Daily claim", amount: 2000 }); setClaimPopup({ amount: 2000, label: "Daily Claim" }); }} />
 
         {/* Status + Withdraw */}
         <div className="flex gap-3">

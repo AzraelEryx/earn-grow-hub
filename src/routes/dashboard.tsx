@@ -37,6 +37,7 @@ function DashboardPage() {
   const { rate } = useRate();
   const nav = useNavigate();
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
+  const [claimPopup, setClaimPopup] = useState<{ amount: number; label: string } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) nav({ to: "/login" });
@@ -98,9 +99,9 @@ function DashboardPage() {
           </div>
         </div>
 
-        <DailyCheckin onClaim={(amount, day) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: `Day ${day} check-in`, amount }); }} />
+        <DailyCheckin onClaim={(amount, day) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: `Day ${day} check-in`, amount }); setClaimPopup({ amount, label: `Day ${day} Check-in` }); }} />
 
-        <ClaimSection onClaim={() => { setBalance((b) => b + 2000); pushTxn({ type: "credit", name: "Daily claim", amount: 2000 }); }} />
+        <ClaimSection onClaim={() => { setBalance((b) => b + 2000); pushTxn({ type: "credit", name: "Daily claim", amount: 2000 }); setClaimPopup({ amount: 2000, label: "Daily Claim" }); }} />
 
         {/* Status + Withdraw */}
         <div className="flex gap-3">
@@ -135,7 +136,35 @@ function DashboardPage() {
 
         <ReferralSection user={user} />
       </div>
+      {claimPopup && <ClaimSuccessModal amount={claimPopup.amount} label={claimPopup.label} onClose={() => setClaimPopup(null)} />}
     </AppShell>
+  );
+}
+
+function ClaimSuccessModal({ amount, label, onClose }: { amount: number; label: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 animate-fade-in">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-sm bg-surface rounded-3xl border border-border p-7 text-center animate-slide-up overflow-hidden">
+        <div className="absolute inset-0 -z-10 opacity-40" style={{ background: "radial-gradient(circle at 50% 0%, rgba(0,201,167,.5), transparent 70%)" }} />
+        <button onClick={onClose} className="absolute top-4 right-4 w-9 h-9 rounded-full border border-border flex items-center justify-center"><IconClose /></button>
+        <div className="relative mx-auto w-20 h-20">
+          <span className="absolute inset-0 rounded-full gradient-accent animate-pulse-ring opacity-60" />
+          <span className="absolute inset-0 rounded-full gradient-accent animate-pulse-ring opacity-60" style={{ animationDelay: ".5s" }} />
+          <div className="relative w-20 h-20 rounded-full gradient-accent flex items-center justify-center">
+            <IconCheck stroke="#08110F" strokeWidth={3} width={36} height={36} />
+          </div>
+        </div>
+        <div className="mt-5 text-xs uppercase tracking-[0.25em] text-muted-foreground">{label}</div>
+        <h3 className="mt-2 text-2xl font-bold">Claim Successful</h3>
+        <p className="mt-1 text-sm text-muted-foreground">You've earned</p>
+        <div className="mt-2 text-4xl font-extrabold text-gradient-accent">{fmtNGN(amount)}</div>
+        <p className="mt-3 text-xs text-muted-foreground">Credited to your balance instantly.</p>
+        <button onClick={onClose} className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-accent text-[#08110F] px-5 py-3 text-sm font-semibold">
+          Continue
+        </button>
+      </div>
+    </div>
   );
 }
 

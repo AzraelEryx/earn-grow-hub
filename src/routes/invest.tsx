@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,6 @@ import { fmtNGN, fmtUSD, ngnToUsd } from "@/lib/format";
 import { PLATFORM_NAME } from "@/lib/mock";
 import { IconShield, IconLock, IconBolt, IconCheck, IconChart } from "@/components/icons";
 import { setCurrentPlan } from "@/lib/plan";
-import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/invest")({
   head: () => ({ meta: [{ title: "Invest — Chixx9ja" }] }),

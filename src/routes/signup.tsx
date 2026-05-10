@@ -61,7 +61,7 @@ function Signup() {
             {[
               { k: "name", l: "Full name", t: "text", p: "John Doe" },
               { k: "email", l: "Email", t: "email", p: "you@example.com" },
-              { k: "phone", l: "Phone number", t: "tel", p: "0801 234 5678" },
+              { k: "phone", l: "Phone number", t: "tel", p: "00000000" },
               { k: "password", l: "Password", t: "password", p: "At least 6 characters" },
               { k: "confirm", l: "Confirm password", t: "password", p: "Re-enter password" },
               { k: "referralCode", l: "Referral code (optional)", t: "text", p: "Enter code" },

@@ -15,17 +15,17 @@ export const Route = createFileRoute("/invest")({
 });
 
 const PLANS = [
-  { t: "Starter",   s: "Basic",    d: 40000,  m: 4, badge: "",            key: "starter" as const },
-  { t: "Growth",    s: "Standard", d: 60000,  m: 4, badge: "",            key: "growth" as const },
-  { t: "Balanced",  s: "Premium",  d: 80000,  m: 4, badge: "Popular",     key: "balanced" as const },
-  { t: "Premium",   s: "Elite",    d: 120000, m: 4, badge: "",            key: "premium" as const },
-  { t: "Elite",     s: "VIP",      d: 200000, m: 4, badge: "",            key: "elite" as const },
-  { t: "Executive", s: "Royal",    d: 300000, m: 4, badge: "Highest ROI", key: "executive" as const },
+  { t: "Starter",   s: "Basic",    d: 10000,  m: 4, badge: "",            key: "starter" as const },
+  { t: "Growth",    s: "Standard", d: 15000,  m: 4, badge: "",            key: "growth" as const },
+  { t: "Balanced",  s: "Premium",  d: 25000,  m: 4, badge: "Popular",     key: "balanced" as const },
+  { t: "Premium",   s: "Elite",    d: 40000,  m: 4, badge: "",            key: "premium" as const },
+  { t: "Elite",     s: "VIP",      d: 60000,  m: 4, badge: "",            key: "elite" as const },
+  { t: "Executive", s: "Royal",    d: 100000, m: 4, badge: "Highest ROI", key: "executive" as const },
 ];
 
 function InvestPage() {
   const { rate } = useRate();
-  const [amount, setAmount] = useState(40000);
+  const [amount, setAmount] = useState(10000);
   const nav = useNavigate();
   useAuth(); // ensure context loads
 
@@ -92,9 +92,9 @@ function InvestPage() {
               <div className="text-[10px] text-muted-foreground">{fmtUSD(ngnToUsd(expected, rate))}</div>
             </div>
           </div>
-          <input type="range" min={40000} max={300000} step={5000} value={amount} onChange={(e) => setAmount(Number(e.target.value))}
+          <input type="range" min={10000} max={100000} step={1000} value={amount} onChange={(e) => setAmount(Number(e.target.value))}
             className="mt-3 w-full accent-[#00C9A7]" />
-          <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{fmtNGN(40000)}</span><span>+{fmtNGN(profit)} profit</span><span>{fmtNGN(300000)}</span></div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{fmtNGN(10000)}</span><span>+{fmtNGN(profit)} profit</span><span>{fmtNGN(100000)}</span></div>
           <div className="mt-2 flex items-center gap-3"><RateBadge />
             <button className="ml-auto rounded-full gradient-accent text-[#08110F] px-5 py-2.5 text-sm font-semibold">Invest {fmtNGN(amount)}</button>
           </div>

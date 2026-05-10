@@ -17,10 +17,13 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-const CHECKIN_KEY = "checkin_v1";
-const CLAIMS_KEY = "claims_v1";
+const DAILY_KEY = "daily_claim_v1";
+const MICRO_KEY = "micro_claim_v1";
 const TXNS_KEY = "txns_v1";
-const checkinAmounts = [500, 700, 1000, 1500, 2000, 2500, 3500];
+const DAILY_AMOUNT = 2000;
+const MICRO_AMOUNT = 200;
+const MICRO_INTERVAL_MS = 30 * 60 * 1000;
+const MICRO_DAILY_MAX = 10;
 
 function getDayStart() {
   const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();
@@ -99,9 +102,9 @@ function DashboardPage() {
           </div>
         </div>
 
-        <DailyCheckin onClaim={(amount, day) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: `Day ${day} check-in`, amount }); setClaimPopup({ amount, label: `Day ${day} Check-in` }); }} />
+        <DailyClaim onClaim={(amount) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: "Daily claim", amount }); setClaimPopup({ amount, label: "Daily Claim" }); }} />
 
-        <ClaimSection onClaim={() => { setBalance((b) => b + 2000); pushTxn({ type: "credit", name: "Daily claim", amount: 2000 }); setClaimPopup({ amount: 2000, label: "Daily Claim" }); }} />
+        <MicroClaim onClaim={(amount) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: "30-min claim", amount }); setClaimPopup({ amount, label: "30-Minute Claim" }); }} />
 
         {/* Status + Withdraw */}
         <div className="flex gap-3">
@@ -187,80 +190,80 @@ function FloatingPaidNotice() {
   );
 }
 
-function DailyCheckin({ onClaim }: { onClaim: (amount: number, day: number) => void }) {
-  const [state, setState] = useState<{ day: number; lastTs: number }>({ day: 1, lastTs: 0 });
+function DailyClaim({ onClaim }: { onClaim: (amount: number) => void }) {
+  const [lastTs, setLastTs] = useState<number>(0);
   useEffect(() => {
     try {
-      const s = JSON.parse(localStorage.getItem(CHECKIN_KEY) || "null");
-      if (s) {
-        // reset if more than 48h missed
-        if (Date.now() - s.lastTs > 48 * 3600 * 1000) setState({ day: 1, lastTs: 0 });
-        else setState(s);
-      }
+      const s = parseInt(localStorage.getItem(DAILY_KEY) || "0", 10);
+      if (s) setLastTs(s);
     } catch {}
   }, []);
-  const todayStart = getDayStart();
-  const claimedToday = state.lastTs >= todayStart;
-  const currentDay = Math.min(state.day, 7);
-  const amount = checkinAmounts[currentDay - 1];
+  const claimedToday = lastTs >= getDayStart();
   const handle = () => {
     if (claimedToday) return;
-    const next = { day: currentDay >= 7 ? 1 : currentDay + 1, lastTs: Date.now() };
-    setState(next);
-    localStorage.setItem(CHECKIN_KEY, JSON.stringify(next));
-    onClaim(amount, currentDay);
+    const now = Date.now();
+    setLastTs(now);
+    localStorage.setItem(DAILY_KEY, String(now));
+    onClaim(DAILY_AMOUNT);
   };
   return (
     <div className="p-5 rounded-3xl bg-card border border-border">
-      <div className="flex items-center gap-2 text-sm font-semibold"><IconFlame /> Daily Check-In</div>
-      <div className="mt-4 grid grid-cols-7 gap-2">
-        {Array.from({ length: 7 }, (_, i) => i + 1).map((d) => {
-          const unlocked = d < currentDay || (d === currentDay && claimedToday);
-          const isCurrent = d === currentDay && !claimedToday;
-          return (
-            <div key={d} className="flex flex-col items-center gap-1">
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center border ${unlocked ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : isCurrent ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>
-                {unlocked ? <IconCheck width={16} height={16} /> : isCurrent ? <span className="text-xs font-bold">{d}</span> : <IconLock width={14} height={14} />}
-              </div>
-              <span className="text-[10px] text-muted-foreground">D{d}</span>
-            </div>
-          );
-        })}
-      </div>
+      <div className="flex items-center gap-2 text-sm font-semibold"><IconFlame /> Daily Claim</div>
+      <p className="mt-1 text-xs text-muted-foreground">Claim {fmtNGN(DAILY_AMOUNT)} once every day.</p>
       <button onClick={handle} disabled={claimedToday}
         className="mt-4 w-full rounded-full py-3 text-sm font-semibold text-[#08110F] disabled:opacity-50"
         style={{ background: "linear-gradient(135deg, #F59E0B, #F5C518)" }}>
-        {claimedToday ? `Day ${currentDay} claimed — come back tomorrow` : `Check In (Day ${currentDay}) — ${fmtNGN(amount)}`}
+        {claimedToday ? "Claimed — come back tomorrow" : `Claim ${fmtNGN(DAILY_AMOUNT)}`}
       </button>
     </div>
   );
 }
 
-function ClaimSection({ onClaim }: { onClaim: () => void }) {
-  const [state, setState] = useState<{ count: number; ts: number }>({ count: 0, ts: 0 });
+function MicroClaim({ onClaim }: { onClaim: (amount: number) => void }) {
+  const [state, setState] = useState<{ count: number; lastTs: number; day: number }>({ count: 0, lastTs: 0, day: 0 });
+  const [now, setNow] = useState(Date.now());
   useEffect(() => {
     try {
-      const s = JSON.parse(localStorage.getItem(CLAIMS_KEY) || "null");
+      const s = JSON.parse(localStorage.getItem(MICRO_KEY) || "null");
       if (s) {
-        if (s.ts < getDayStart()) setState({ count: 0, ts: getDayStart() });
+        if (s.day !== getDayStart()) setState({ count: 0, lastTs: 0, day: getDayStart() });
         else setState(s);
+      } else {
+        setState({ count: 0, lastTs: 0, day: getDayStart() });
       }
     } catch {}
   }, []);
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
+
+  const day = getDayStart();
+  const effective = state.day === day ? state : { count: 0, lastTs: 0, day };
+  const remaining = MICRO_DAILY_MAX - effective.count;
+  const nextAt = effective.lastTs ? effective.lastTs + MICRO_INTERVAL_MS : 0;
+  const waitMs = Math.max(0, nextAt - now);
+  const ready = remaining > 0 && waitMs === 0;
+  const mm = Math.floor(waitMs / 60000);
+  const ss = Math.floor((waitMs % 60000) / 1000);
   const handle = () => {
-    if (state.count >= 30) return;
-    const next = { count: state.count + 1, ts: getDayStart() };
-    setState(next); localStorage.setItem(CLAIMS_KEY, JSON.stringify(next));
-    onClaim();
+    if (!ready) return;
+    const next = { count: effective.count + 1, lastTs: Date.now(), day };
+    setState(next);
+    localStorage.setItem(MICRO_KEY, JSON.stringify(next));
+    onClaim(MICRO_AMOUNT);
   };
   return (
     <div className="p-5 rounded-3xl bg-card border border-border flex items-center gap-4">
       <div className="w-12 h-12 rounded-2xl gradient-accent flex items-center justify-center"><IconGift stroke="#08110F" /></div>
-      <div className="flex-1">
-        <div className="font-semibold">Claim {fmtNGN(2000)}</div>
-        <div className="text-xs text-muted-foreground">{state.count}/30 claims today</div>
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold">Claim {fmtNGN(MICRO_AMOUNT)}</div>
+        <div className="text-xs text-muted-foreground">
+          {remaining <= 0
+            ? "Daily limit reached — resets tomorrow"
+            : ready
+              ? `${remaining} of ${MICRO_DAILY_MAX} claims left today`
+              : `Next claim in ${String(mm).padStart(2, "0")}:${String(ss).padStart(2, "0")} · ${remaining} left`}
+        </div>
       </div>
-      <button onClick={handle} disabled={state.count >= 30}
+      <button onClick={handle} disabled={!ready}
         className="px-5 py-2.5 rounded-full bg-emerald-500 text-emerald-950 text-sm font-semibold disabled:opacity-50">
         Claim
       </button>

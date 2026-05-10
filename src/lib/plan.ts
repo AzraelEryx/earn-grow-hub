@@ -17,12 +17,12 @@ export const FREE_PLAN: UserPlan = {
 };
 
 export const PAID_PLANS: UserPlan[] = [
-  { key: "starter",   label: "Starter (Basic)",     deposit: 40000,  withdrawMin: 10000,  withdrawDays: [1, 4] },        // Mon, Thu
-  { key: "growth",    label: "Growth (Standard)",   deposit: 60000,  withdrawMin: 15000,  withdrawDays: [1, 3, 5] },     // Mon, Wed, Fri
-  { key: "balanced",  label: "Balanced (Premium)",  deposit: 80000,  withdrawMin: 20000,  withdrawDays: [1, 3, 5] },
-  { key: "premium",   label: "Premium (Elite)",     deposit: 120000, withdrawMin: 30000,  withdrawDays: [1, 2, 4, 5] },
-  { key: "elite",     label: "Elite (VIP)",         deposit: 200000, withdrawMin: 50000,  withdrawDays: [1, 2, 3, 4, 5] },
-  { key: "executive", label: "Executive (Royal)",   deposit: 300000, withdrawMin: 75000,  withdrawDays: [1, 2, 3, 4, 5] },
+  { key: "starter",   label: "Starter (Basic)",     deposit: 10000,  withdrawMin: 3000,   withdrawDays: [1, 4] },
+  { key: "growth",    label: "Growth (Standard)",   deposit: 15000,  withdrawMin: 5000,   withdrawDays: [1, 3, 5] },
+  { key: "balanced",  label: "Balanced (Premium)",  deposit: 25000,  withdrawMin: 8000,   withdrawDays: [1, 3, 5] },
+  { key: "premium",   label: "Premium (Elite)",     deposit: 40000,  withdrawMin: 12000,  withdrawDays: [1, 2, 4, 5] },
+  { key: "elite",     label: "Elite (VIP)",         deposit: 60000,  withdrawMin: 20000,  withdrawDays: [1, 2, 3, 4, 5] },
+  { key: "executive", label: "Executive (Royal)",   deposit: 100000, withdrawMin: 35000,  withdrawDays: [1, 2, 3, 4, 5] },
 ];
 
 export const ALL_PLANS = [FREE_PLAN, ...PAID_PLANS];

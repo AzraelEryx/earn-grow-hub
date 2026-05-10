@@ -99,9 +99,9 @@ function DashboardPage() {
           </div>
         </div>
 
-        <DailyCheckin onClaim={(amount, day) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: `Day ${day} check-in`, amount }); setClaimPopup({ amount, label: `Day ${day} Check-in` }); }} />
+        <DailyClaim onClaim={(amount) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: "Daily claim", amount }); setClaimPopup({ amount, label: "Daily Claim" }); }} />
 
-        <ClaimSection onClaim={() => { setBalance((b) => b + 2000); pushTxn({ type: "credit", name: "Daily claim", amount: 2000 }); setClaimPopup({ amount: 2000, label: "Daily Claim" }); }} />
+        <MicroClaim onClaim={(amount) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: "30-min claim", amount }); setClaimPopup({ amount, label: "30-Minute Claim" }); }} />
 
         {/* Status + Withdraw */}
         <div className="flex gap-3">

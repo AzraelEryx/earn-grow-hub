@@ -9,7 +9,7 @@ export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
       { title: "Create Account — Chixx9ja" },
-      { name: "description", content: "Sign up and instantly receive a N30,000 welcome bonus." },
+      { name: "description", content: "Sign up and instantly receive a N5,000 welcome bonus." },
     ],
   }),
   component: Signup,
@@ -55,7 +55,7 @@ function Signup() {
       <main className="flex-1 flex items-start sm:items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-bold">Create your account</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Get N30,000 welcome bonus instantly.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Get N5,000 welcome bonus instantly.</p>
 
           <form onSubmit={submit} className="mt-6 space-y-3">
             {[

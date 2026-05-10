@@ -75,7 +75,7 @@ function ReferralsPage() {
               <ol className="mt-3 space-y-3 text-sm">
                 {[
                   "Share your unique referral link",
-                  "They sign up and get N30,000 welcome bonus",
+                  "They sign up and get N5,000 welcome bonus",
                   `You earn ${fmtNGN(perInvite)} instantly`,
                 ].map((s, i) => (
                   <li key={i} className="flex gap-3">

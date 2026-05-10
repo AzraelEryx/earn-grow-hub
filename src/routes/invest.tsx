@@ -25,7 +25,7 @@ const PLANS = [
 
 function InvestPage() {
   const { rate } = useRate();
-  const [amount, setAmount] = useState(40000);
+  const [amount, setAmount] = useState(10000);
   const nav = useNavigate();
   useAuth(); // ensure context loads
 

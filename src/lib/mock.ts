@@ -28,6 +28,6 @@ export const PLACEHOLDERS = {
   facebook: "https://facebook.com/",
   supportHandle: "@OfficialChinex",
   adminPassword: "admin2026",
-  welcomeBonus: 30000,
+  welcomeBonus: 5000,
   perReferral: 3500,
 };

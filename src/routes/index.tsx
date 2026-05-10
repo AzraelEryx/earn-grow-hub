@@ -173,7 +173,7 @@ function Landing() {
         <h2 className="text-2xl sm:text-3xl font-bold text-center">How It Works</h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {[
-            { n: "01", t: "Sign Up Free", d: "Create your account in under a minute and instantly receive your N30,000 welcome bonus.", icon: IconUsers },
+            { n: "01", t: "Sign Up Free", d: "Create your account in under a minute and instantly receive your N5,000 welcome bonus.", icon: IconUsers },
             { n: "02", t: "Refer & Complete Tasks", d: "Share your unique link, complete daily tasks and unlock more rewards every day.", icon: IconBolt },
             { n: "03", t: "Withdraw or Invest", d: "Cash out securely or grow it through one of our verified investment tiers.", icon: IconChart },
           ].map((s) => {

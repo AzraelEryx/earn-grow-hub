@@ -17,10 +17,13 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-const CHECKIN_KEY = "checkin_v1";
-const CLAIMS_KEY = "claims_v1";
+const DAILY_KEY = "daily_claim_v1";
+const MICRO_KEY = "micro_claim_v1";
 const TXNS_KEY = "txns_v1";
-const checkinAmounts = [500, 700, 1000, 1500, 2000, 2500, 3500];
+const DAILY_AMOUNT = 2000;
+const MICRO_AMOUNT = 200;
+const MICRO_INTERVAL_MS = 30 * 60 * 1000;
+const MICRO_DAILY_MAX = 10;
 
 function getDayStart() {
   const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();

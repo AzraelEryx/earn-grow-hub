@@ -15,12 +15,12 @@ export const Route = createFileRoute("/invest")({
 });
 
 const PLANS = [
-  { t: "Starter",   s: "Basic",    d: 40000,  m: 4, badge: "",            key: "starter" as const },
-  { t: "Growth",    s: "Standard", d: 60000,  m: 4, badge: "",            key: "growth" as const },
-  { t: "Balanced",  s: "Premium",  d: 80000,  m: 4, badge: "Popular",     key: "balanced" as const },
-  { t: "Premium",   s: "Elite",    d: 120000, m: 4, badge: "",            key: "premium" as const },
-  { t: "Elite",     s: "VIP",      d: 200000, m: 4, badge: "",            key: "elite" as const },
-  { t: "Executive", s: "Royal",    d: 300000, m: 4, badge: "Highest ROI", key: "executive" as const },
+  { t: "Starter",   s: "Basic",    d: 10000,  m: 4, badge: "",            key: "starter" as const },
+  { t: "Growth",    s: "Standard", d: 15000,  m: 4, badge: "",            key: "growth" as const },
+  { t: "Balanced",  s: "Premium",  d: 25000,  m: 4, badge: "Popular",     key: "balanced" as const },
+  { t: "Premium",   s: "Elite",    d: 40000,  m: 4, badge: "",            key: "premium" as const },
+  { t: "Elite",     s: "VIP",      d: 60000,  m: 4, badge: "",            key: "elite" as const },
+  { t: "Executive", s: "Royal",    d: 100000, m: 4, badge: "Highest ROI", key: "executive" as const },
 ];
 
 function InvestPage() {

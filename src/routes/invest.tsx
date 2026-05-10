@@ -92,9 +92,9 @@ function InvestPage() {
               <div className="text-[10px] text-muted-foreground">{fmtUSD(ngnToUsd(expected, rate))}</div>
             </div>
           </div>
-          <input type="range" min={40000} max={300000} step={5000} value={amount} onChange={(e) => setAmount(Number(e.target.value))}
+          <input type="range" min={10000} max={100000} step={1000} value={amount} onChange={(e) => setAmount(Number(e.target.value))}
             className="mt-3 w-full accent-[#00C9A7]" />
-          <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{fmtNGN(40000)}</span><span>+{fmtNGN(profit)} profit</span><span>{fmtNGN(300000)}</span></div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground"><span>{fmtNGN(10000)}</span><span>+{fmtNGN(profit)} profit</span><span>{fmtNGN(100000)}</span></div>
           <div className="mt-2 flex items-center gap-3"><RateBadge />
             <button className="ml-auto rounded-full gradient-accent text-[#08110F] px-5 py-2.5 text-sm font-semibold">Invest {fmtNGN(amount)}</button>
           </div>

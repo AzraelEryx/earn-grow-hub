@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RateProvider } from "@/contexts/RateContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Splash } from "@/components/Splash";
+import { ToastHost } from "@/components/Toast";
 
 function NotFoundComponent() {
   return (
@@ -114,6 +115,7 @@ function RootComponent() {
           <AuthProvider>
             {showSplash && <Splash onDone={() => setShowSplash(false)} />}
             <Outlet />
+            <ToastHost />
           </AuthProvider>
         </RateProvider>
       </ThemeProvider>

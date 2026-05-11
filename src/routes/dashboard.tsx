@@ -8,9 +8,13 @@ import { fmtNGN, fmtUSD, ngnToUsd, maskName, timeAgo } from "@/lib/format";
 import { randAmount, randName, PLACEHOLDERS } from "@/lib/mock";
 import {
   IconBell, IconWallet, IconFlame, IconLock, IconCheck, IconGift, IconCopy,
-  IconUsers, IconHistory, IconSpin, IconBolt, IconTrophy, IconArrowRight,
-  IconTelegram, IconWhatsapp, IconInstagram, IconLinkedin, IconTiktok, IconClose,
+  IconUsers, IconHistory, IconSpin, IconTrophy, IconArrowRight, IconClose, IconBolt, IconDollar, IconShare,
 } from "@/components/icons";
+import {
+  getCurrentPlan, getClaimState, canClaimToday, claimedTodayAlready, recordClaim, planComplete,
+} from "@/lib/plan";
+import { ShareModal, buildReferralLink } from "@/components/ShareModal";
+import { showToast } from "@/components/Toast";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Chixx9ja" }] }),
@@ -25,9 +29,7 @@ const MICRO_AMOUNT = 200;
 const MICRO_INTERVAL_MS = 30 * 60 * 1000;
 const MICRO_DAILY_MAX = 10;
 
-function getDayStart() {
-  const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime();
-}
+function getDayStart() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
 
 function pushTxn(t: { type: "credit" | "debit"; name: string; amount: number }) {
   const list = (() => { try { return JSON.parse(localStorage.getItem(TXNS_KEY) || "[]"); } catch { return []; } })();
@@ -41,11 +43,10 @@ function DashboardPage() {
   const nav = useNavigate();
   const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
   const [claimPopup, setClaimPopup] = useState<{ amount: number; label: string } | null>(null);
+  const [claimTick, setClaimTick] = useState(0); // refresh InvestmentDashboard after claims
+  const plan = useMemo(() => getCurrentPlan(), [claimTick]);
 
-  useEffect(() => {
-    if (!loading && !user) nav({ to: "/login" });
-  }, [user, loading, nav]);
-
+  useEffect(() => { if (!loading && !user) nav({ to: "/login" }); }, [user, loading, nav]);
   if (!user) return null;
   const greet = (() => {
     const h = new Date().getHours();
@@ -97,20 +98,31 @@ function DashboardPage() {
           </div>
           <div className="mt-2"><RateBadge /></div>
           <div className="mt-5 grid grid-cols-2 gap-3">
-            <button className="rounded-full border border-border py-2.5 text-sm font-medium hover:border-primary/50">Top-Up</button>
-            <Link to="/invest" className="rounded-full gradient-accent text-[#08110F] py-2.5 text-sm font-semibold text-center">Upgrade</Link>
+            <Link to="/withdraw" className="rounded-full border border-border py-2.5 text-sm font-medium hover:border-primary/50 text-center inline-flex items-center justify-center gap-2">
+              <IconDollar width={16} height={16} /> Withdraw
+            </Link>
+            <Link to="/invest" className="rounded-full gradient-accent text-[#08110F] py-2.5 text-sm font-semibold text-center inline-flex items-center justify-center gap-2">
+              <IconBolt width={16} height={16} stroke="#08110F" /> Upgrade
+            </Link>
           </div>
         </div>
+
+        {/* Investment dashboard — only when active plan */}
+        {plan.key !== "free" && (
+          <InvestmentDashboard
+            onClaim={(amount, label) => {
+              setBalance((b) => b + amount);
+              pushTxn({ type: "credit", name: label, amount });
+              setClaimPopup({ amount, label });
+              setClaimTick((x) => x + 1);
+            }}
+            tick={claimTick}
+          />
+        )}
 
         <DailyClaim onClaim={(amount) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: "Daily claim", amount }); setClaimPopup({ amount, label: "Daily Claim" }); }} />
 
         <MicroClaim onClaim={(amount) => { setBalance((b) => b + amount); pushTxn({ type: "credit", name: "30-min claim", amount }); setClaimPopup({ amount, label: "30-Minute Claim" }); }} />
-
-        {/* Status + Withdraw */}
-        <div className="flex gap-3">
-          <button className="flex-1 px-4 py-3 rounded-full bg-secondary text-sm font-medium">Status</button>
-          <Link to="/withdraw" className="flex-1 px-4 py-3 rounded-full gradient-accent text-[#08110F] text-sm font-semibold text-center">Withdraw</Link>
-        </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
@@ -118,7 +130,7 @@ function DashboardPage() {
             { to: "/referrals", t: "Refer & Earn", icon: IconUsers, tint: "from-teal-500/30 to-teal-500/5" },
             { to: "/tasks", t: "Daily Tasks", icon: IconBell, tint: "from-blue-500/30 to-blue-500/5" },
             { to: "/history", t: "History", icon: IconHistory, tint: "from-purple-500/30 to-purple-500/5" },
-            { to: "/profile", t: "Spin & Win", icon: IconSpin, tint: "from-amber-500/30 to-amber-500/5" },
+            { to: "/profile", t: "Profile & Bank", icon: IconSpin, tint: "from-amber-500/30 to-amber-500/5" },
           ] as const).map((q, i) => {
             const Icon = q.icon;
             return (
@@ -144,6 +156,68 @@ function DashboardPage() {
   );
 }
 
+function InvestmentDashboard({ onClaim, tick }: { onClaim: (amount: number, label: string) => void; tick: number }) {
+  const plan = useMemo(() => getCurrentPlan(), [tick]);
+  const state = useMemo(() => getClaimState(), [tick]);
+  const ready = canClaimToday(plan, state);
+  const alreadyClaimed = claimedTodayAlready(state);
+  const complete = planComplete(plan, state);
+  const remaining = Math.max(0, plan.durationDays - state.claimsMade);
+  const totalClaimed = state.claimsMade * plan.dailyClaim;
+  const totalPossible = plan.dailyClaim * plan.durationDays;
+  const pct = Math.min(100, (state.claimsMade / plan.durationDays) * 100);
+
+  const handle = () => {
+    if (!ready) return;
+    recordClaim();
+    onClaim(plan.dailyClaim, `${plan.short} daily claim`);
+  };
+
+  return (
+    <div className="p-5 rounded-3xl bg-gradient-to-br from-emerald-500/15 to-cyan-500/10 border border-border card-glow">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+          <IconBolt width={14} height={14} /> {plan.label} Dashboard
+        </div>
+        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
+          {complete ? "Complete" : "Active"}
+        </span>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+        <div className="p-2.5 rounded-xl bg-card/60">
+          <div className="text-[10px] text-muted-foreground">Day</div>
+          <div className="font-bold text-sm">{state.claimsMade} / {plan.durationDays}</div>
+        </div>
+        <div className="p-2.5 rounded-xl bg-card/60">
+          <div className="text-[10px] text-muted-foreground">Daily</div>
+          <div className="font-bold text-sm text-gold">{fmtNGN(plan.dailyClaim)}</div>
+        </div>
+        <div className="p-2.5 rounded-xl bg-card/60">
+          <div className="text-[10px] text-muted-foreground">Earned</div>
+          <div className="font-bold text-sm text-emerald-400">{fmtNGN(totalClaimed)}</div>
+        </div>
+      </div>
+      <div className="mt-3 h-2 rounded-full bg-secondary overflow-hidden">
+        <div className="h-full gradient-accent transition-all" style={{ width: `${pct}%` }} />
+      </div>
+      <div className="mt-1 text-[11px] text-muted-foreground text-right">Total claimable {fmtNGN(totalPossible)}</div>
+      <button onClick={handle} disabled={!ready}
+        className="mt-4 w-full rounded-full gradient-accent text-[#08110F] py-3 text-sm font-semibold disabled:opacity-50">
+        {complete
+          ? "Plan completed — invest again"
+          : alreadyClaimed
+            ? "Claimed today — come back tomorrow"
+            : `Claim today's ${fmtNGN(plan.dailyClaim)}`}
+      </button>
+      {!complete && (
+        <div className="mt-2 text-[11px] text-muted-foreground text-center">
+          {remaining} day{remaining === 1 ? "" : "s"} left · Min withdrawal {fmtNGN(plan.withdrawMin)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ClaimSuccessModal({ amount, label, onClose }: { amount: number; label: string; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 animate-fade-in">
@@ -153,7 +227,6 @@ function ClaimSuccessModal({ amount, label, onClose }: { amount: number; label: 
         <button onClick={onClose} className="absolute top-4 right-4 w-9 h-9 rounded-full border border-border flex items-center justify-center"><IconClose /></button>
         <div className="relative mx-auto w-20 h-20">
           <span className="absolute inset-0 rounded-full gradient-accent animate-pulse-ring opacity-60" />
-          <span className="absolute inset-0 rounded-full gradient-accent animate-pulse-ring opacity-60" style={{ animationDelay: ".5s" }} />
           <div className="relative w-20 h-20 rounded-full gradient-accent flex items-center justify-center">
             <IconCheck stroke="#08110F" strokeWidth={3} width={36} height={36} />
           </div>
@@ -163,9 +236,7 @@ function ClaimSuccessModal({ amount, label, onClose }: { amount: number; label: 
         <p className="mt-1 text-sm text-muted-foreground">You've earned</p>
         <div className="mt-2 text-4xl font-extrabold text-gradient-accent">{fmtNGN(amount)}</div>
         <p className="mt-3 text-xs text-muted-foreground">Credited to your balance instantly.</p>
-        <button onClick={onClose} className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-accent text-[#08110F] px-5 py-3 text-sm font-semibold">
-          Continue
-        </button>
+        <button onClick={onClose} className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full gradient-accent text-[#08110F] px-5 py-3 text-sm font-semibold">Continue</button>
       </div>
     </div>
   );
@@ -208,7 +279,7 @@ function DailyClaim({ onClaim }: { onClaim: (amount: number) => void }) {
   };
   return (
     <div className="p-5 rounded-3xl bg-card border border-border">
-      <div className="flex items-center gap-2 text-sm font-semibold"><IconFlame /> Daily Claim</div>
+      <div className="flex items-center gap-2 text-sm font-semibold"><IconFlame /> Daily Bonus</div>
       <p className="mt-1 text-xs text-muted-foreground">Claim {fmtNGN(DAILY_AMOUNT)} once every day.</p>
       <button onClick={handle} disabled={claimedToday}
         className="mt-4 w-full rounded-full py-3 text-sm font-semibold text-[#08110F] disabled:opacity-50"
@@ -273,10 +344,7 @@ function MicroClaim({ onClaim }: { onClaim: (amount: number) => void }) {
 
 function Achievements() {
   const [open, setOpen] = useState(false);
-  const badges = [
-    "First Login","First Referral","First Withdrawal","10 Referrals","25 Referrals",
-    "First Investment","Daily Streak 7","Task Master","Top Earner","Verified",
-  ];
+  const badges = ["First Login","First Referral","First Withdrawal","10 Referrals","25 Referrals","First Investment","Daily Streak 7","Task Master","Top Earner","Verified"];
   return (
     <>
       <button onClick={() => setOpen(true)} className="w-full p-4 rounded-2xl bg-card border border-border flex items-center gap-3 card-glow text-left">
@@ -334,19 +402,17 @@ function LiveActivity() {
 }
 
 function ReferralSection({ user }: { user: { referralCode: string; name: string } }) {
-  const link = `${typeof window !== "undefined" ? window.location.origin : ""}/?ref=${user.referralCode}`;
-  const copy = () => { navigator.clipboard.writeText(link); };
-  const copyAll = () => {
-    const msg = `Hey, join ${"Chixx9ja"} and get ${fmtNGN(PLACEHOLDERS.welcomeBonus)} welcome bonus. Use my code ${user.referralCode} or sign up here: ${link}`;
-    navigator.clipboard.writeText(msg);
-  };
-  const shareOn = (url: string) => window.open(url, "_blank");
+  const link = buildReferralLink(user.referralCode);
+  const message = `Join Chixx9ja and get ${fmtNGN(PLACEHOLDERS.welcomeBonus)} welcome bonus. Use my code ${user.referralCode}.`;
+  const [share, setShare] = useState(false);
+  const copy = async () => { try { await navigator.clipboard.writeText(link); showToast("Link copied"); } catch {} };
+  let invites = 0; try { invites = parseInt(localStorage.getItem("invites_v1") || "0", 10); } catch {}
   return (
     <div className="p-5 rounded-3xl bg-card border border-border">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-xs text-muted-foreground">Total Referrals</div>
-          <div className="text-2xl font-bold">0</div>
+          <div className="text-2xl font-bold">{invites}</div>
         </div>
         <div className="text-right">
           <div className="text-xs text-muted-foreground">Per Referral</div>
@@ -355,23 +421,10 @@ function ReferralSection({ user }: { user: { referralCode: string; name: string 
       </div>
       <div className="mt-4 flex gap-2">
         <input readOnly value={link} className="flex-1 px-3 py-2.5 rounded-xl bg-input border border-border text-xs" />
-        <button onClick={copy} className="w-11 h-11 rounded-xl border border-border flex items-center justify-center"><IconCopy /></button>
+        <button onClick={copy} className="w-11 h-11 rounded-xl border border-border flex items-center justify-center" title="Copy"><IconCopy /></button>
+        <button onClick={() => setShare(true)} className="w-11 h-11 rounded-xl gradient-accent text-[#08110F] flex items-center justify-center" title="Share"><IconShare stroke="#08110F" /></button>
       </div>
-      <button onClick={copyAll} className="mt-3 w-full rounded-full gradient-accent text-[#08110F] py-3 text-sm font-semibold">Copy Link, Code & Message</button>
-      <div className="mt-4 flex items-center justify-around">
-        {[
-          { Icon: IconTelegram, url: `https://t.me/share/url?url=${encodeURIComponent(link)}` },
-          { Icon: IconWhatsapp, url: `https://wa.me/?text=${encodeURIComponent(link)}` },
-          { Icon: IconInstagram, url: "https://instagram.com" },
-          { Icon: IconLinkedin, url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}` },
-          { Icon: IconTiktok, url: "https://tiktok.com" },
-        ].map(({ Icon, url }, i) => (
-          <button key={i} onClick={() => shareOn(url)}
-            className="w-11 h-11 rounded-full border border-border flex items-center justify-center hover:border-primary/50">
-            <Icon />
-          </button>
-        ))}
-      </div>
+      <ShareModal open={share} onClose={() => setShare(false)} link={link} message={message} />
     </div>
   );
 }

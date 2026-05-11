@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ThemeToggle } from "@/components/AppShell";
-import { PLATFORM_NAME, PLACEHOLDERS, randAmount, randName, NIGERIAN_NAMES } from "@/lib/mock";
+import { PLATFORM_NAME, PLACEHOLDERS, randAmount, randName } from "@/lib/mock";
 import { fmtNGN, maskName, timeAgo } from "@/lib/format";
+import { useLiveStats } from "@/lib/stats";
 import {
   IconShield, IconArrowRight, IconUsers, IconBolt, IconChart, IconCheck,
-  IconTelegram, IconX, IconFacebook, IconClose
+  IconClose,
 } from "@/components/icons";
 
 export const Route = createFileRoute("/")({
@@ -192,19 +193,8 @@ function Landing() {
         </div>
       </section>
 
-      {/* Stats bar */}
-      <section className="border-y border-border bg-surface">
-        <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            ["50K+", "Active Users"], ["N500M+", "Total Paid Out"], ["99.9%", "Uptime"], ["MMXXV", "Established"],
-          ].map(([v, l]) => (
-            <div key={l}>
-              <div className="text-2xl sm:text-3xl font-bold text-gradient-accent">{v}</div>
-              <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{l}</div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <LiveStatsBar />
+
 
       {/* Social proof */}
       <section className="max-w-6xl mx-auto px-4 py-14">
@@ -243,7 +233,7 @@ function Landing() {
       <section className="max-w-3xl mx-auto px-4 pb-20 text-center">
         <div className="p-10 rounded-3xl gradient-accent text-[#08110F]">
           <h2 className="text-2xl sm:text-3xl font-bold">Ready to start earning?</h2>
-          <p className="mt-2 opacity-80">Join {NIGERIAN_NAMES.length * 2000}+ Nigerians earning daily.</p>
+          <p className="mt-2 opacity-80">Join thousands of Nigerians earning daily.</p>
           <button onClick={() => setGate(true)} className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-[#08110F] text-white px-7 py-4 font-semibold">
             Start Earning Now <IconArrowRight />
           </button>
